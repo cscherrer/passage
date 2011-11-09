@@ -1,0 +1,1 @@
+Passage (Parallel Sampler Generator) is an Bayesian modeling EDSL. Given a model specification and data, Passage generates low-level code for sampling the posterior distribution in parallel using OpenMP threads.

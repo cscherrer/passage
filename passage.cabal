@@ -1,0 +1,54 @@
+Name:          passage
+Version:       0.1
+Category:      Statistical Modeling, Code Generation
+Synopsis:      Parallel code generation for hierarchical Bayesian modeling.
+Description:   
+  Passage is a PArallel SAmpler GEnerator. The user specifies a hierarchical
+  Bayesian model and data using the Passage EDSL, and Passage generates code 
+  to sample the posterior distribution in parallel.
+  .
+  Currently Passage targets C with OpenMP threads.
+Copyright:     2011 Galois, Inc. and Battelle Memorial Institute
+License:       BSD3
+License-file:  LICENSE
+Stability:     Experimental
+Author:        Chad Scherrer (Pacific Northwest National Laboratory),
+               Levent Erkok (Galois, Inc),
+               Iavor Diatchki (Galois, Inc),
+               Matthew Sottile (Galois, Inc)
+Maintainer:    Chad Scherrer
+Build-Type:    Simple
+Cabal-Version: >= 1.6
+Extra-Source-Files: README, COPYRIGHT, LICENSE
+Data-Files: cbits/runtime/src/mt19937ar.h
+          , cbits/runtime/src/kiss.h
+          , cbits/runtime/src/passage.h
+          , cbits/runtime/src/passage.c
+          , cbits/runtime/src/generic_slicers.c
+          , cbits/runtime/src/templates/slice.c
+          , cbits/runtime/src/templates/finiteMetropolis.c
+          , cbits/runtime/src/templates/metropolis_posreal.c
+          , cbits/runtime/src/Makefile
+          , cbits/runtime/Makefile
+
+Library
+  ghc-options     : -Wall
+  ghc-prof-options: -auto-all -caf-all
+  Build-Depends   : base >= 3 && < 5, containers, monadLib, pretty,
+                    process, primitive, filepath, directory, random, GraphSCC,
+                    mwc-random, array
+  Exposed-modules : Language.Passage
+                  , Language.Passage.Distribution
+                  , Language.Passage.UI
+  Other-modules   : Language.Passage.AST
+                  , Language.Passage.Graph
+                  , Language.Passage.Graph2C
+                  , Language.Passage.Lang.LaTeX
+                  , Language.Passage.Lang.C
+                  , Language.Passage.SliceSample
+                  , Language.Passage.SliceSampleMWC
+                  , Language.Passage.Term
+                  , Language.Passage.Utils
+                  , Language.Passage.SimulatorConf
+                  , Language.Passage.GraphColor
+                  , Paths_passage
