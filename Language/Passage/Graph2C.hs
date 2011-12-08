@@ -12,7 +12,7 @@ import qualified Data.Map as M
 import qualified Data.IntMap as IM
 import qualified Data.IntSet as IS
 import Data.Maybe(maybeToList,fromJust)
-import Data.List(sortBy, transpose)
+import Data.List(sortBy, transpose, foldl')
 import Data.Function(on)
 import MonadLib (ReaderT, StateT, Id
                 , runId, runStateT, runReaderT
@@ -20,9 +20,11 @@ import MonadLib (ReaderT, StateT, Id
                 , forM
                 , zipWithM
                 )
+import Data.List (partition)
 
 import Data.Graph(SCC(..))
 import Data.Graph.SCC
+import Debug.Trace
 
 
 --------------------------------------------------------------------------------
@@ -601,20 +603,41 @@ genParGroups cpus which xs = concatMap makeSections xs
 
 -}
 
+isSingleton [_] = True
+isSingleton _   = False
+
+singleton x = [x]
+
+intTable :: [Int] -> [(Int,Int)]
+intTable xs = IM.assocs $! foldl' f IM.empty xs
+    where f m x = let  m' = IM.insertWith (+) x 1 m
+                       Just v = IM.lookup x m'
+                  in v `seq` m'
+
+
 genParGroups :: Int -> (StoVarCode -> [CStmt]) -> [[StoVarCode]] -> [[CStmt]]
-genParGroups cpus which = map concat . transpose . map threadBlocks
+genParGroups cpus which colors = trace (show lengths) . map concat . transpose $ seqBlocks ++ parBlocks
 
   where
+  lengths = intTable . map length $ colors
+  (seqColors, parColors) = partition isSingleton colors
+  
+  seqBlocks = singleton . addBlanks cpus . singleton . makeBlock . concat $ seqColors
+  
+  parBlocks = map threadBlocks parColors
+  
   entries_per_thread len  = (len + cpus - 1) `div` cpus
 
   -- Allocate a list of indipendent statements to different threads.
   -- Each blocks start with a barrier
+  threadBlocks :: [StoVarCode] -> [[CStmt]]
   threadBlocks vs = map makeBlock
                   $ addBlanks cpus
                   $ chunks (entries_per_thread len)
                   $ sortBy (compare `on` locality) vs
     where len = length vs
 
+  makeBlock :: [StoVarCode] -> [CStmt]
   makeBlock vs  = pragma "omp barrier" : concatMap which vs
 
   -- If there is not enough work for all threads, we insert
