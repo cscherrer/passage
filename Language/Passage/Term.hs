@@ -231,9 +231,11 @@ tbd2 w x y = tbd ("Term." ++ w ++ show (x, y))
 
 instance (Eq a, Show a) => Num (Term a) where
   -- addition
+  TConst x + TConst y 
+    | x == y    = TConst (2 * x)
+    | otherwise = TConst (x + y)
+  a + b@(TConst _) = b + a              -- constants float left
   TConst 0 + b        = b
-  a + TConst 0        = a
-  TConst x + TConst y = TConst (x + y)
   a + (TApp TAdd [b,c]) = (a + b) + c
   a + TApp TNeg [b]   = a - b
   TApp TNeg [a] + b   = b - a
