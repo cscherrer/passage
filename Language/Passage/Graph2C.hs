@@ -622,7 +622,7 @@ genParGroups cpus which colors = trace (show lengths) . map concat . transpose $
   lengths = intTable . map length $ colors
   (seqColors, parColors) = partition isSingleton colors
   
-  seqBlocks = singleton . addBlanks cpus . singleton . makeBlock . concat $ seqColors
+  seqBlocks = singleton . addBarriers cpus . singleton . makeBlock . concat $ seqColors
   
   parBlocks = map threadBlocks parColors
   
@@ -647,7 +647,9 @@ genParGroups cpus which colors = trace (show lengths) . map concat . transpose $
   addBlanks n (x : xs)  = x : seq m (addBlanks m xs)
     where m = n - 1
 
-
+  addBarriers n []      = replicate n [pragma "omp barrier"]
+  addBarriers n (x:xs)  = x : seq m (addBarriers m xs)
+    where m = n - 1
 
 -- Split a list into chunks of the given length.
 -- If we run out of elements we make empty lists.
