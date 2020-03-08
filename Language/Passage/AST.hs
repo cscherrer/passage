@@ -121,7 +121,7 @@ data ASTState = ASTState
   }
 
 newtype BayesianNetwork a = BayesianNetwork (StateT ASTState Id a)
-                          deriving (Functor,Monad)
+                          deriving (Functor, Applicative, Monad)
 
 updateState :: (ASTState -> (a,ASTState)) -> BayesianNetwork a
 updateState f = BayesianNetwork (sets f)

@@ -141,7 +141,7 @@ getArrDimensions t =
 
 --------------------------------------------------------------------------------
 
-newtype M a = M (ReaderT R (StateT S Id) a) deriving (Functor, Monad)
+newtype M a = M (ReaderT R (StateT S Id) a) deriving (Functor, Applicative, Monad)
 
 data R  = R { config   :: SamplerConf
             , sampling :: Maybe NodeIdx
