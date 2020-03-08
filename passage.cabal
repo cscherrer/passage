@@ -18,7 +18,7 @@ Author:        Chad Scherrer (Pacific Northwest National Laboratory),
                Matthew Sottile (Galois, Inc)
 Maintainer:    Chad Scherrer
 Build-Type:    Simple
-Cabal-Version: >= 1.6
+Cabal-Version: >= 1.8
 Extra-Source-Files: README, COPYRIGHT, LICENSE
 Data-Files: cbits/runtime/src/mt19937ar.h
           , cbits/runtime/src/kiss.h
@@ -51,4 +51,12 @@ Library
                   , Language.Passage.Utils
                   , Language.Passage.SimulatorConf
                   , Language.Passage.GraphColor
-                  , Paths_passage
+                  -- , Paths_passage
+
+executable main
+  default-language:    Haskell2010
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  build-depends:       base
+                     , passage

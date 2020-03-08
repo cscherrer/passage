@@ -44,7 +44,7 @@ initSimState = SimState { cfgSampleNum    = 100000
 
 
 newtype BayesianSimulator a = B (StateT SimState Id a)
-                                      deriving (Functor, Monad)
+                                      deriving (Functor, Applicative, Monad)
 
 upd :: (SimState -> SimState) -> BayesianSimulator ()
 upd f = B $ sets_ f
